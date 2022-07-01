@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace对应接口的全类名 -->
+<mapper namespace="com.example.mapper.SysUserMapper">
+    <resultMap id="BaseResultMap" type="com.example.pojo.SysUser">
+        <id column="id" property="id" jdbcType="INTEGER"></id>
+       <result property="username" column="username"/>
+       <result property="password" column="password"/>
+       <result property="status" column="status"/>
+       <result property="passwordNonExpired" column="password_non_expired"/>
+    </resultMap>
+
+
+  <select id="getByUsername" resultMap="BaseResultMap">
+    select
+    id, username, password, status, password_non_expired
+    from sys_user
+    where username = #{username}
+  </select>
+
+
+
+
+
+
+
+</mapper>

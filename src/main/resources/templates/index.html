@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html  xmlns:th="http://www.thymeleaf.org"
+       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <title></title>
+    <link href="/js/message/css/style.css" rel='stylesheet' type='text/css' />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8   " />
+
+ <style type="text/css">
+     h1{
+         float: left;
+         margin-left: 45%;
+     }
+     #logout,#login,#user{
+         margin-left: 1100px;
+         float: left;
+     }
+
+ </style>
+<!--sec:authorize无法生效原因是springsecurity4支持2.0.9以下的springboot，
+高版本需要改成springsecurity5-->
+</head>
+    <body>
+       <h1 style="color: yellow;">index</h1>
+
+       <a id="login" class="hvr-fade button" href="/toLogin" sec:authorize="isAnonymous()">登录</a>
+       <a id="user" class="hvr-fade button" href="#" sec:authorize="!isAnonymous()" sec:authentication="name">用户名</a>
+       <a id="logout" class="hvr-fade button" href="/logout" sec:authorize="!isAnonymous()">注销</a>
+         <div style="margin-left: 30%;">
+             <ul class="bt-list">
+                 <li sec:authorize="hasRole('vip1')">
+                     <a href="/level1/1" class="hvr-back-pulse button">level1-1</a></p>
+                     <a href="/level1/2" class="hvr-back-pulse button">level1-2</a></p>
+                     <a href="/level1/3" class="hvr-back-pulse button">level1-3</a></p>
+                 </li>
+                 <li sec:authorize="hasRole('vip2')">
+                     <a href="/level2/1" class="hvr-sweep-to-right button">level2-1</a></p>
+                     <a href="/level2/2" class="hvr-sweep-to-right button">level2-2</a></p>
+                     <a href="/level2/3" class="hvr-sweep-to-right button">level2-3</a></p>
+                 </li>
+                 <li sec:authorize="hasRole('vip3')">
+                     <a href="/level3/1" class="hvr-sweep-to-left button">level3-1</a></p>
+                     <a href="/level3/2" class="hvr-sweep-to-left button">level3-2</a></p>
+                     <a href="/level3/3" class="hvr-sweep-to-left button">level3-3</a></p>
+                 </li>
+             </ul>
+         </div>
+
+</body>
+</html>
