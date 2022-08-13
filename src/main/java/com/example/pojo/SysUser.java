@@ -1,7 +1,9 @@
 package com.example.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -14,6 +16,8 @@ import java.util.List;
  * @date : 2022-06-15 16:59
  **/
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class SysUser implements UserDetails {
 
     private Long id;
@@ -37,12 +41,13 @@ public class SysUser implements UserDetails {
 
     @Override
     public String getPassword() {
-        return null;
+        return this.password;
     }
+
 
     @Override
     public String getUsername() {
-        return null;
+        return this.username;
     }
 
     @JsonIgnore

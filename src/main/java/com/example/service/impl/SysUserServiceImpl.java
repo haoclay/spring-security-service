@@ -11,13 +11,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -81,17 +81,19 @@ public class SysUserServiceImpl implements SysUserService {
         }
         request.getSession().setAttribute("user",sysUser);
 
-        System.out.println("我在做验证...");
+        System.out.println("我在做验证..."+sysUser);
         // 2.获取用户关联的所有角色
-       List<SysRole> sysRoles = sysRoleMapper.listAllByUserId(sysUser.getId());
-        /* sysUser.setRoles(sysRoles);
-        System.out.println("====> sysUser=" + sysUser.toString());
-        return sysUser;*/
-
+        List<SysRole> sysRoles = sysRoleMapper.listAllByUserId(sysUser.getId());
         //给用户授权，ROLE_USER表示是USER权限而不是ROLE_USER权限
+
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-        return new User(sysUser.getUsername(),sysUser.getPassword(),sysRoles);
+        sysRoles.forEach(sysRole -> authorities.add(new SimpleGrantedAuthority(sysRole.getRoleName())));
+        System.out.println(authorities);
+        UserDetails userDetails = new User(sysUser.getUsername(),sysUser.getPassword(),authorities);
+
+        return userDetails;
 
     }
+
+
 }

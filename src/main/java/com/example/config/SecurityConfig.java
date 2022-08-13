@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
 /**
  * @author : SGQ
@@ -18,6 +19,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    private SysUserService userService;
     // 加密对象注入IOC容器
     @Bean
     public BCryptPasswordEncoder passwordEncoder(){
@@ -32,12 +35,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers("/").permitAll()
-                .antMatchers("/level1/**").hasRole("vip1")
-                .antMatchers("/level2/**").hasRole("vip2")
-                .antMatchers("/level3/**").hasRole("vip3");
+                .antMatchers("/level1/**").hasAnyAuthority("vip1")
+                .antMatchers("/level2/**").hasAnyAuthority("vip2")
+                .antMatchers("/level3/**").hasAnyAuthority("vip3");
 
         //没有权限直接跳登录页
-        http.formLogin().loginPage("/toLogin").usernameParameter("username").passwordParameter("password").loginProcessingUrl("/login");
+        http.formLogin().loginPage("/toLogin")
+                .usernameParameter("username")
+                .passwordParameter("password")
+                .loginProcessingUrl("/login")
+                .defaultSuccessUrl("/index");
+//                .successHandler(successHandler());
         http.logout().logoutSuccessUrl("/");
         http.rememberMe();
 
@@ -45,11 +53,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-            auth.inMemoryAuthentication().passwordEncoder(new BCryptPasswordEncoder())
+/*            auth.inMemoryAuthentication().passwordEncoder(new BCryptPasswordEncoder())
                     .withUser("sgq").password(new BCryptPasswordEncoder().encode("123")).roles("vip1","vip2")
                     .and()
-                    .withUser("admin").password(new BCryptPasswordEncoder().encode("123")).roles("vip1","vip2","vip3");
-
+                    .withUser("admin").password(new BCryptPasswordEncoder().encode("123")).roles("vip1","vip2","vip3");*/
+        auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
     }
+
+    SavedRequestAwareAuthenticationSuccessHandler successHandler(){
+        SavedRequestAwareAuthenticationSuccessHandler handler = new SavedRequestAwareAuthenticationSuccessHandler();
+        handler.setDefaultTargetUrl("/index");
+        handler.setTargetUrlParameter("target");
+        return handler;
+    }
+
+
 
 }
